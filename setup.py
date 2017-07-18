@@ -21,5 +21,5 @@ setup(
         ],
     keywords='Turris Tetris',
 
-    packages=['turtetris_master']
+    packages=['turtetris_master', 'turtetris_slave']
     )
