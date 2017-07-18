@@ -1,4 +1,5 @@
 import usb.core
+import usb.backend.libusb1
 import usb.util
 
 # Personal Communication Systems, Inc. SNES Gamepad
@@ -14,8 +15,11 @@ class Gamepad:
 
     def __init__(self, conf=CONF_SNES_GAMEPAD):
         "Initializes usb subsystem"
+        backend = usb.backend.libusb1.get_backend(find_library=lambda x:
+                                                  "/usr/lib/libusb-1.0.so")
         self.dev = usb.core.find(idVendor=conf['idVendor'],
-                                 idProduct=conf['idProduct'])
+                                 idProduct=conf['idProduct'],
+                                 backend=backend)
         if self.dev is None:
             raise ValueError('Device not found')
 
