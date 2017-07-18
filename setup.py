@@ -21,10 +21,10 @@ setup(
         ],
     keywords='Turris Tetris',
 
-    packages=['turtetris'],
+    packages=['turtetris_master'],
     entry_points={
         'console_scripts': [
-            'turtetris-master=turtetris-master:main'
+            'turtetris-master=turtetris_master:main'
             ]
         }
     )
