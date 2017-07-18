@@ -24,7 +24,7 @@ setup(
     packages=['turtetris'],
     entry_points={
         'console_scripts': [
-            'turtetris-master=turtetris-master'
+            'turtetris-master=turtetris-master:main'
             ]
         }
     )
