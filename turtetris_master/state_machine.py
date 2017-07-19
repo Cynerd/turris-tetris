@@ -30,6 +30,8 @@ class StateMachine:
         elif state == "game-over":
             if self.state != "game":
                 __exception__()
+            self.matrix.fill('red')
+            self.matrix.display()
         else:
             __exception__()
         self.state = state

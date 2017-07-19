@@ -29,3 +29,9 @@ class Matrix:
         if x < 0 or x > 11 or y < 0 or y > 9:
             raise Exception('Pixel out of matrix')
         self.__mat__[y][x] = color
+
+    def fill(self, color):
+        "Fill whole matrix with given color"
+        for x in range(self.width):
+            for y in range(self.height):
+                self.pixel(x, y, color)
