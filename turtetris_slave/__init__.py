@@ -22,7 +22,6 @@ def main():
     leds.prepare()
     while True:
         msg = sck.recv_string()
-        print(msg)
         json0 = msg.find(' ')  # First empty char is end of envelope
         leds.output(json.loads(msg[json0:]))
 

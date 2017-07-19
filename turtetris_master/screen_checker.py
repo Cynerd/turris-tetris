@@ -12,6 +12,7 @@ class ScreenChecker:
             self.__pos__[i][1] = i
             for y in range(0, i):
                 matrix.pixel(i, y, 'green')
+        matrix.display()
 
     def __pos_inc__(self, p):
         p += 1
@@ -21,13 +22,11 @@ class ScreenChecker:
 
     def tick(self):
         self.__tick__ += 1
-        if self.__tick__ > 60:
+        if self.__tick__ > 15:
             self.__tick__ = 0
             for i in range(0, self.matrix.height):
                 self.matrix.pixel(self.__pos__[i][0], i, '000000')
                 self.__pos__[i][0] = self.__pos_inc__(self.__pos__[i][0])
                 self.__pos__[i][1] = self.__pos_inc__(self.__pos__[i][1])
                 self.matrix.pixel(self.__pos__[i][1], i, color='green')
-            return True
-        else:
-            return False
+            self.matrix.display()

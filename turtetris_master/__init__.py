@@ -1,23 +1,17 @@
 import time
 from .led_output import Matrix
 from .usb_input import Gamepad
-from .screen_checker import ScreenChecker
+from .state_machine import StateMachine
 
 
 def main():
     "Main function"
     inpt = Gamepad()
     mtrx = Matrix()
-    sc = ScreenChecker(mtrx)
-    mtrx.display()  # Display first state
+    sm = StateMachine(mtrx, inpt)
     while True:
         tstart = time.time()
-        ##
-        #print(inpt.check())
-        if sc.tick():
-            mtrx.display()
-            #print(mtrx.__mat__[2])
-        ##
+        sm.tick()
         trest = (1/60) - (time.time() - tstart)
         if trest > 0:
             time.sleep(trest)
