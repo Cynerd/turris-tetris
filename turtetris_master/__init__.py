@@ -1,19 +1,28 @@
 import time
 from .led_output import Matrix
 from .usb_input import Gamepad
+from .screen_checker import ScreenChecker
 
 
 def main():
     "Main function"
     inpt = Gamepad()
-    print('Gamepad initialized')
     mtrx = Matrix()
-    print('Matrix initialized')
+    sc = ScreenChecker(mtrx)
+    mtrx.display()  # Display first state
     while True:
-        print('loop!!!!')
-        print(inpt.check())
-        mtrx.display()
-        time.sleep(1)
+        tstart = time.time()
+        ##
+        #print(inpt.check())
+        if sc.tick():
+            mtrx.display()
+            #print(mtrx.__mat__[2])
+        ##
+        trest = (1/60) - (time.time() - tstart)
+        if trest > 0:
+            time.sleep(trest)
+        else:
+            print("Output took too long!!")
 
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ from subprocess import call
 
 def prepare():
     "Prepare leds"
-    call("rainbow all enable intensity 10 FFFFFF", shell=True)
+    call("rainbow all enable FFFFFF", shell=True)
 
 
 def clear():
@@ -32,7 +32,5 @@ def output(data):
     args = ['rainbow']
     for i in range(0, 12):
         args.append(__MAP__[i])
-        args.append(str(data[i]['color']))
-        args.append('intensity')
-        args.append(str(data[i]['intens']))
+        args.append(str(data[i]))
     call(args)
