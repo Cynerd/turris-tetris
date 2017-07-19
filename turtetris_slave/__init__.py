@@ -10,7 +10,7 @@ def socket_init(line):
     socket = context.socket(zmq.SUB)
     socket.subscribe('line' + str(line))
     # socket.setsockopt_string(zmq.SUBSCRIBE, 'line' + str(line))
-    socket.connect('tcp://192.168.2.1:4444')  # TODO change to 192.168.1.1
+    socket.connect('tcp://192.168.1.1:4444')
     return socket
 
 
