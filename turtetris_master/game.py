@@ -183,10 +183,14 @@ class Game:
         rotated = [
             [self.stone[y][x] for y in range(len(self.stone))]
             for x in range(len(self.stone[0]) - 1, -1, -1)]
-        if not self.__check_collision__(self.stone_x, self.stone_y, rotated):
-            self.__clear_stone__()
-            self.stone = rotated
-            self.__render_stone__()
+        for shift in [0, 1, -1, 2, -2]:
+            shifted_x = self.stone_x + shift
+            if not self.__check_collision__(shifted_x, self.stone_y, rotated):
+                self.__clear_stone__()
+                self.stone = rotated
+                self.stone_x = shifted_x
+                self.__render_stone__()
+                break
 
     def __move__(self, left):
         "Move stone left or right"
