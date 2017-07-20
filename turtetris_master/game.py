@@ -1,3 +1,4 @@
+import time
 from random import randrange
 
 
@@ -46,7 +47,8 @@ class Game:
             self.mx[i] = [0]*matrix.height
         self.stone_next = SHAPES[randrange(len(SHAPES))][:]
         # Don't have to check result as it should always be successful
-        assert self.new_stone()
+        if not self.new_stone():
+            raise Exception('New game but we can\'t place stone')
         self.step = 0
         self.step_edge = 60
         matrix.display()
@@ -73,10 +75,13 @@ class Game:
         for x in range(2):
             for y in range(4):
                 if x < len(self.stone_next) and y < len(self.stone_next[x]):
-                    self.matrix.pixel(11 - x, 9 - y,
+                    self.matrix.pixel(self.matrix.width - 1 - x,
+                                      self.matrix.height - 1 - y,
                                       COLORS[self.stone_next[x][y]])
                 else:
-                    self.matrix.pixel(11 - x, 9 - y, 'black')
+                    self.matrix.pixel(self.matrix.width - 1 - x,
+                                      self.matrix.height - 1 - y,
+                                      'black')
         return True
 
     def __render_stone__(self):
@@ -84,8 +89,8 @@ class Game:
         for x in range(len(self.stone)):
             for y in range(len(self.stone[x])):
                 if self.stone[x][y] != 0:
-                    self.matrix.pixel(11 - x - 3 - self.stone_x,
-                                      9 - y - self.stone_y,
+                    self.matrix.pixel(self.matrix.width - x - 4 - self.stone_x,
+                                      self.matrix.height - 1 - y - self.stone_y,
                                       COLORS[self.stone[x][y]])
 
     def __clear_stone__(self):
@@ -93,21 +98,19 @@ class Game:
         for x in range(len(self.stone)):
             for y in range(len(self.stone[x])):
                 if self.stone[x][y] != 0:
-                    self.matrix.pixel(11 - x - 3 - self.stone_x,
-                                      9 - y - self.stone_y,
+                    self.matrix.pixel(self.matrix.width - x - 4 - self.stone_x,
+                                      self.matrix.height - 1 - y - self.stone_y,
                                       'black')
 
     def __check_collision__(self, x, y, stone):
         "Check if stone collides. Returns True of so."
         for a in range(len(stone)):
             for b in range(len(stone[a])):
-                sx = 11 - a - x
-                sy = 9 - b - y
-                print("sx:{0} sy:{1} mx:{2}:{3}".format(
-                    sx, sy, len(self.mx), len(self.mx[0])
-                    ))
+                sx = len(self.mx) - 1 - a - x
+                sy = len(self.mx[a]) - 1 - b - y
                 if stone[a][b] != 0 and (
-                        sx < 0 or sy < 0 or sx > 11 or sy > 9 or
+                        sx < 0 or sy < 0 or
+                        sx >= len(self.mx) or sy >= len(self.mx[a]) or
                         self.mx[sx][sy] != 0):
                     return True
         return False
@@ -117,9 +120,39 @@ class Game:
         for x in range(len(self.stone)):
             for y in range(len(self.stone[x])):
                 if self.stone[x][y] != 0:
-                    self.mx[11 - x - self.stone_x][9 - y - self.stone_y] =\
-                        self.stone[x][y]
-        # TODO Line completion and removal and step division
+                    sx = len(self.mx) - 1 - x - self.stone_x
+                    sy = len(self.mx[0]) - 1 - y - self.stone_y
+                    if sy >= len(self.mx[0]) - 1:
+                        # Placing in to the top most line means game-over
+                        return False
+                    self.mx[sx][sy] = self.stone[x][y]
+        # Check if we don't potentionally have full line
+        y = 0
+        while y < len(self.mx[0]):
+            x = 0
+            while x < len(self.mx) and self.mx[x][y] != 0:
+                x += 1
+            if x >= len(self.mx):  # We have full line
+                # Show red line
+                for x in range(len(self.mx)):
+                    self.matrix.pixel(self.matrix.width - x,
+                                      self.matrix.height - y, 'red')
+                self.matrix.display()
+                time.sleep(0.2)
+                # Now move all lines down
+                for yy in range(y, len(self.mx[0]) - 1):
+                    for x in range(len(self.mx)):
+                        self.mx[x][yy] = self.mx[x][yy + 1]
+                        self.matrix.pixel(self.matrix.width - x,
+                                          self.matrix.height - yy,
+                                          COLORS[self.mx[x][yy]])
+                # Make ticks faster
+                self.step_edge *= 0.8
+            else:
+                # Note that this ensures that we check same line again after
+                # line is located
+                x += 1
+        # Create new stone (if possible)
         return self.new_stone()
 
     def __down__(self):
@@ -131,6 +164,7 @@ class Game:
             self.__clear_stone__()
             self.stone_y = new_y
             self.__render_stone__()
+            return True
 
     def __rotate__(self):
         "Rotate stone"
@@ -138,8 +172,8 @@ class Game:
             [self.stone[y][x] for y in range(len(self.stone))]
             for x in range(len(self.stone[0]) - 1, -1, -1)]
         if not self.__check_collision__(self.stone_x, self.stone_y, rotated):
-            self.stone = rotated
             self.__clear_stone__()
+            self.stone = rotated
             self.__render_stone__()
 
     def __move__(self, left):
@@ -163,7 +197,7 @@ class Game:
             self.__move__(input['left'])
         if self.step >= self.step_edge or \
            (input['down'] and self.step >= self.step_edge/2):
-            gameover = self.__down__()
+            gameover = not self.__down__()
             self.step = 0
         else:
             self.step += 1
