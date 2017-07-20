@@ -29,7 +29,7 @@ COLORS = [
     'FFFF00',
     '88FF00',
     '00FF88',
-    '00FFFF',
+    'FF8800',
     '0088FF',
     '8800FF',
     'FF0088'
@@ -122,7 +122,7 @@ class Game:
         "Show score in bottom right"
         i = self.score % 5
         y = int(self.score / 5)
-        for ii in range(i):
+        for ii in range(5):
             if ii < i:
                 self.matrix.pixel(self.matrix.width - 1, ii, 'green')
             else:
