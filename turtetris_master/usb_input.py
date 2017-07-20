@@ -44,11 +44,15 @@ class Gamepad:
         )
         assert self.ep is not None
 
+        self.state = {}
+        for key in ['left', 'right', 'up', 'down', 'select', 'start']:
+            self.state[key] = False
+
     def check(self):
         "Check the input state"
         data = self.dev.read(self.ep.bEndpointAddress,
                              self.ep.wMaxPacketSize*2, 1000).tolist()
-        return {
+        new_state = {
             "left": data[3] < 120 or bool(data[5] & 0x80),
             "right": data[3] > 140 or bool(data[5] & 0x20),
             "up": data[4] < 120 or bool(data[5] & 0x10),
@@ -56,3 +60,8 @@ class Gamepad:
             "select": bool(data[6] & 0x10),
             "start": bool(data[6] & 0x20),
         }
+        changed = {}
+        for key in ['left', 'right', 'up', 'down', 'select', 'start']:
+            changed[key] = new_state[key] and not self.state[key]
+        self.state = new_state
+        return changed

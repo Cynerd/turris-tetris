@@ -103,6 +103,9 @@ class Game:
             for b in range(len(stone[a])):
                 sx = 11 - a - x
                 sy = 9 - b - y
+                print("sx:{0} sy:{1} mx:{2}:{3}".format(
+                    sx, sy, len(self.mx), len(self.mx[0])
+                    ))
                 if stone[a][b] != 0 and (
                         sx < 0 or sy < 0 or sx > 11 or sy > 9 or
                         self.mx[sx][sy] != 0):
