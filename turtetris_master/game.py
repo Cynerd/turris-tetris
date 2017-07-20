@@ -26,13 +26,13 @@ SHAPES = [
 
 COLORS = [
     'black',
-    'FF5500',
-    '64C873',
-    '786CF5',
-    'FF8C32',
-    '327834',
-    '92CA49',
-    '96A1DA'
+    'FFFF00',
+    '88FF00',
+    '00FF88',
+    '00FFFF',
+    '0088FF',
+    '8800FF',
+    'FF0088'
 ]
 
 
@@ -50,7 +50,7 @@ class Game:
         if not self.new_stone():
             raise Exception('New game but we can\'t place stone')
         self.step = 0
-        self.step_edge = 60
+        self.step_edge = 100
         self.score = 0
         self.__show_score__()
         matrix.display()
@@ -157,7 +157,7 @@ class Game:
                         # Note: mx is already inverted
                         self.matrix.pixel(x, yy, COLORS[self.mx[x][yy]])
                 # Make ticks faster
-                self.step_edge *= 0.8
+                self.step_edge *= 0.9
                 self.score += 1
                 self.__show_score__()
             else:
