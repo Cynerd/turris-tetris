@@ -46,7 +46,7 @@ class Gamepad:
 
         self.state = {}
         for key in ['left', 'right', 'up', 'down', 'select', 'start']:
-            self.state[key] = False
+            self.state[key] = 0
 
     def check(self):
         "Check the input state"
@@ -62,7 +62,12 @@ class Gamepad:
         }
         changed = {}
         for key in ['left', 'right', 'up', 'down', 'select', 'start']:
-            changed[key] = new_state[key] and not self.state[key]
-        # TODO repeat
-        self.state = new_state
+            changed[key] = False
+            if new_state[key]:
+                if self.state[key] == 0 or self.state[key] > 14:
+                    changed[key] = True
+                    self.state[key] = 0
+                self.state[key] += 1
+            else:
+                self.state[key] = 0
         return changed
