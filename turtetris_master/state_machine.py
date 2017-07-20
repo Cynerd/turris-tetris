@@ -36,6 +36,14 @@ class StateMachine:
             if self.state != "game":
                 __exception__()
             self.matrix.fill('red')
+            i = self.matrix.height - 2
+            # Show score
+            for _ in range(int(self.game.score / 5)):
+                for s in range(5):
+                    self.matrix.pixel(s + 3, i, 'green')
+                i -= 1
+            for s in range(self.game.score % 5):
+                self.matrix.pixel(s + 3, i, 'green')
             self.matrix.display()
         else:
             __exception__()

@@ -120,7 +120,12 @@ class Game:
 
     def __show_score__(self):
         "Show score in bottom right"
-        pass
+        i = self.score % 5
+        y = int(self.score / 5)
+        for ii in range(i):
+            self.matrix.pixel(self.matrix.width - 1, ii, 'green')
+        for yy in range(y):
+            self.matrix.pixel(self.matrix.width - 2, yy, 'green')
 
     def __place__(self):
         "Stone can't move so place it, check lines and generate new one"
@@ -202,8 +207,7 @@ class Game:
             self.__rotate__()
         if input['left'] != input['right']:
             self.__move__(input['left'])
-        if self.step >= self.step_edge or \
-           (input['down'] and self.step >= self.step_edge/3):
+        if self.step >= self.step_edge or input['down']:
             gameover = not self.__down__()
             self.step = 0
         else:
