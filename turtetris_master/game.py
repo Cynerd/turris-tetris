@@ -123,9 +123,14 @@ class Game:
         i = self.score % 5
         y = int(self.score / 5)
         for ii in range(i):
-            self.matrix.pixel(self.matrix.width - 1, ii, 'green')
-        for yy in range(y):
-            self.matrix.pixel(self.matrix.width - 2, yy, 'green')
+            if ii < i:
+                self.matrix.pixel(self.matrix.width - 1, ii, 'green')
+            else:
+                self.matrix.pixel(self.matrix.width - 1, ii, 'black')
+            if ii < y:
+                self.matrix.pixel(self.matrix.width - 2, ii, 'green')
+            else:
+                self.matrix.pixel(self.matrix.width - 2, ii, 'black')
 
     def __place__(self):
         "Stone can't move so place it, check lines and generate new one"
