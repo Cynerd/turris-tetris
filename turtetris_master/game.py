@@ -42,7 +42,7 @@ class Game:
     def __init__(self, matrix):
         self.matrix = matrix
         matrix.fill('black')  # Clear game area
-        self.mx = [None]*(matrix.width - 3)
+        self.mx = [None]*(matrix.width - 2)
         for i in range(len(self.mx)):
             self.mx[i] = [0]*matrix.height
         self.stone_next = SHAPES[randrange(len(SHAPES))][:]
@@ -51,6 +51,8 @@ class Game:
             raise Exception('New game but we can\'t place stone')
         self.step = 0
         self.step_edge = 60
+        self.score = 0
+        self.__show_score__()
         matrix.display()
 
     def new_stone(self):
@@ -58,26 +60,27 @@ class Game:
         self.stone = self.stone_next
         self.stone_next = SHAPES[randrange(len(SHAPES))][:]  # Note: we do copy
         # Render stone on top
-        self.stone_x = 3
+        self.stone_x = 4
         self.stone_y = 0
         if self.__check_collision__(self.stone_x, self.stone_y, self.stone):
             # locate different place
             self.stone_x = 0
-            while self.stone_x < (self.matrix.width - 3) and \
+            while self.stone_x < (self.matrix.width - 2) and \
                 self.__check_collision__(self.stone_x, self.stone_y,
                                          self.stone):
                 self.stone_x += 1
-        if self.stone_x >= (self.matrix.width - 3):
+        if self.stone_x >= (self.matrix.width - 2):
             # Than game over
             return False
         self.__render_stone__()
         # Render next stone
         for x in range(2):
             for y in range(4):
-                if x < len(self.stone_next) and y < len(self.stone_next[x]):
+                if (x < len(self.stone_next) and y < len(self.stone_next[x])
+                        and self.stone_next[x][y] != 0):
                     self.matrix.pixel(self.matrix.width - 1 - x,
                                       self.matrix.height - 1 - y,
-                                      COLORS[self.stone_next[x][y]])
+                                      'red')
                 else:
                     self.matrix.pixel(self.matrix.width - 1 - x,
                                       self.matrix.height - 1 - y,
@@ -89,7 +92,7 @@ class Game:
         for x in range(len(self.stone)):
             for y in range(len(self.stone[x])):
                 if self.stone[x][y] != 0:
-                    self.matrix.pixel(self.matrix.width - x - 4 - self.stone_x,
+                    self.matrix.pixel(self.matrix.width - x - 3 - self.stone_x,
                                       self.matrix.height - 1 - y - self.stone_y,
                                       COLORS[self.stone[x][y]])
 
@@ -98,7 +101,7 @@ class Game:
         for x in range(len(self.stone)):
             for y in range(len(self.stone[x])):
                 if self.stone[x][y] != 0:
-                    self.matrix.pixel(self.matrix.width - x - 4 - self.stone_x,
+                    self.matrix.pixel(self.matrix.width - x - 3 - self.stone_x,
                                       self.matrix.height - 1 - y - self.stone_y,
                                       'black')
 
@@ -114,6 +117,10 @@ class Game:
                         self.mx[sx][sy] != 0):
                     return True
         return False
+
+    def __show_score__(self):
+        "Show score in bottom right"
+        pass
 
     def __place__(self):
         "Stone can't move so place it, check lines and generate new one"
@@ -135,23 +142,23 @@ class Game:
             if x >= len(self.mx):  # We have full line
                 # Show red line
                 for x in range(len(self.mx)):
-                    self.matrix.pixel(self.matrix.width - x,
-                                      self.matrix.height - y, 'red')
+                    self.matrix.pixel(x, y, 'red')
                 self.matrix.display()
                 time.sleep(0.2)
                 # Now move all lines down
                 for yy in range(y, len(self.mx[0]) - 1):
                     for x in range(len(self.mx)):
                         self.mx[x][yy] = self.mx[x][yy + 1]
-                        self.matrix.pixel(self.matrix.width - x,
-                                          self.matrix.height - yy,
-                                          COLORS[self.mx[x][yy]])
+                        # Note: mx is already inverted
+                        self.matrix.pixel(x, yy, COLORS[self.mx[x][yy]])
                 # Make ticks faster
                 self.step_edge *= 0.8
+                self.score += 1
+                self.__show_score__()
             else:
                 # Note that this ensures that we check same line again after
                 # line is located
-                x += 1
+                y += 1
         # Create new stone (if possible)
         return self.new_stone()
 
@@ -196,7 +203,7 @@ class Game:
         if input['left'] != input['right']:
             self.__move__(input['left'])
         if self.step >= self.step_edge or \
-           (input['down'] and self.step >= self.step_edge/2):
+           (input['down'] and self.step >= self.step_edge/3):
             gameover = not self.__down__()
             self.step = 0
         else:

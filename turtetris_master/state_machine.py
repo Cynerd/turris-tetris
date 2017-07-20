@@ -25,7 +25,12 @@ class StateMachine:
         elif state == "game":
             if self.state == "screen_checker" or self.state == "game-over":
                 self.game = Game(self.matrix)
+            elif self.state == "game-pause":
+                pass
             else:
+                __exception__()
+        elif state == "game-pause":
+            if self.state != "game":
                 __exception__()
         elif state == "game-over":
             if self.state != "game":
@@ -45,8 +50,16 @@ class StateMachine:
             else:
                 self.screen_checker.tick()
         elif self.state == "game":
-            if not self.game.tick(inpt):
+            if inpt['start']:
+                self.__update_state__('game-pause')
+            elif not self.game.tick(inpt):
                 self.__update_state__('game-over')
+        elif self.state == "game-pause":
+            if inpt['start']:
+                self.__update_state__('game')
+            elif inpt['select']:
+                self.game = Game(self.matrix)
+                self.__update_state__('game')
         elif self.state == "game-over":
             if inpt['start']:
                 self.__update_state__('game')

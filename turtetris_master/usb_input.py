@@ -63,5 +63,7 @@ class Gamepad:
         changed = {}
         for key in ['left', 'right', 'up', 'down', 'select', 'start']:
             changed[key] = new_state[key] and not self.state[key]
+            if key == 'down':
+                changed[key] = new_state[key]
         self.state = new_state
         return changed
