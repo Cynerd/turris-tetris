@@ -45,8 +45,10 @@ class Gamepad:
         assert self.ep is not None
 
         self.state = {}
-        for key in ['left', 'right', 'up', 'down', 'select', 'start']:
+        for key in ['left', 'right', 'up', 'down']:
             self.state[key] = 0
+        for key in ['select', 'start']:
+            self.state[key] = False
 
     def check(self):
         "Check the input state"
@@ -61,7 +63,7 @@ class Gamepad:
             "start": bool(data[6] & 0x20),
         }
         changed = {}
-        for key in ['left', 'right', 'up', 'down', 'select', 'start']:
+        for key in ['left', 'right', 'up', 'down']:
             changed[key] = False
             if new_state[key]:
                 if self.state[key] == 0 or self.state[key] > 14:
@@ -70,4 +72,7 @@ class Gamepad:
                 self.state[key] += 1
             else:
                 self.state[key] = 0
+        for key in ['select', 'start']:
+            changed[key] = new_state[key] and not self.state[key]
+            self.state[key] = new_state[key]
         return changed
