@@ -25,7 +25,7 @@ SHAPES = [
 ]
 
 COLORS = [
-    'black',
+    '010101',
     'FFFF00',
     '88FF00',
     '00FF88',
@@ -45,6 +45,9 @@ class Game:
         self.mx = [None]*(matrix.width - 2)
         for i in range(len(self.mx)):
             self.mx[i] = [0]*matrix.height
+        for x in range(len(self.mx)):  # Light game area up
+            for y in range(len(self.mx[x])):
+                matrix.pixel(x, y, COLORS[0])
         self.stone_next = SHAPES[randrange(len(SHAPES))][:]
         # Don't have to check result as it should always be successful
         if not self.new_stone():
@@ -103,7 +106,7 @@ class Game:
                 if self.stone[x][y] != 0:
                     self.matrix.pixel(self.matrix.width - x - 3 - self.stone_x,
                                       self.matrix.height - 1 - y - self.stone_y,
-                                      'black')
+                                      COLORS[0])
 
     def __check_collision__(self, x, y, stone):
         "Check if stone collides. Returns True of so."
@@ -126,11 +129,11 @@ class Game:
             if ii < i:
                 self.matrix.pixel(self.matrix.width - 1, ii, 'green')
             else:
-                self.matrix.pixel(self.matrix.width - 1, ii, 'black')
+                self.matrix.pixel(self.matrix.width - 1, ii, COLORS[0])
             if ii < y:
                 self.matrix.pixel(self.matrix.width - 2, ii, 'green')
             else:
-                self.matrix.pixel(self.matrix.width - 2, ii, 'black')
+                self.matrix.pixel(self.matrix.width - 2, ii, COLORS[0])
 
     def __place__(self):
         "Stone can't move so place it, check lines and generate new one"
