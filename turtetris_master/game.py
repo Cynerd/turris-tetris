@@ -129,11 +129,11 @@ class Game:
             if ii < i:
                 self.matrix.pixel(self.matrix.width - 1, ii, 'green')
             else:
-                self.matrix.pixel(self.matrix.width - 1, ii, COLORS[0])
+                self.matrix.pixel(self.matrix.width - 1, ii, 'black')
             if ii < y:
                 self.matrix.pixel(self.matrix.width - 2, ii, 'green')
             else:
-                self.matrix.pixel(self.matrix.width - 2, ii, COLORS[0])
+                self.matrix.pixel(self.matrix.width - 2, ii, 'black')
 
     def __place__(self):
         "Stone can't move so place it, check lines and generate new one"
