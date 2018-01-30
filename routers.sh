@@ -7,7 +7,7 @@ I=0
 
 for R in $ROUTERS; do
 	echo "=== Runnining on 192.168.1.$R ==="
-	ssh -i ~/router root@192.168.1.$R -- $@
+	ssh -i ~/router root@192.168.1.$R -- "$@"
 	#scp -i ~/router user.lua root@192.168.1.$R:/etc/updater/user.lua
 	#ssh -i ~/router root@192.168.1.$R -- uci set turtetris.line=$I
 	#ssh -i ~/router root@192.168.1.$R -- /etc/init.d/turtetris-slave restart
